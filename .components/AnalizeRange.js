@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const RangePicker = () => {
+const RangePicker = ({ onSelect }) => {
   const [selectedValue, setSelectedValue] = useState('Última Hora');
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -11,6 +11,7 @@ const RangePicker = () => {
   const handleSelect = (value) => {
     setSelectedValue(value);
     setModalVisible(false);
+    onSelect(value); 
   };
 
   return (
@@ -49,6 +50,9 @@ const RangePicker = () => {
     </View>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
