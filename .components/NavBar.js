@@ -12,16 +12,6 @@ const NavBar = ({ navigation }) => {
     <View style={styles.navigationBar}>
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => navigation.navigate('Plots', { plotId: 1 })}
-      >
-        <Image
-          source={require('../assets/air.png')}
-          style={styles.navImage}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.navButton}
         onPress={() => navigation.navigate('Home')}
       >
         <Image
