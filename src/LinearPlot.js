@@ -15,7 +15,6 @@ const Plots = () => {
   const route = useRoute();
   const gas = route.params.gas || {};
   const boxcolor = route.params.color || {};
-  console.log(gas);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -166,13 +165,13 @@ const Plots = () => {
               backgroundColor: "#f5f5f5",
               backgroundGradientFrom: "#ffffff",
               backgroundGradientTo: "#f5f5f5",
-              color: (opacity = color) => color, 
+              color: (opacity = color) => boxcolor, 
               labelColor: (opacity = 0) => "black",
           
               propsForDots: {
                 r: "6", 
                 strokeWidth: "2", 
-                fill: color
+                fill: boxcolor
                 
               },
               propsForLabels: {

@@ -47,7 +47,7 @@ const SignUpScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ready Yourself For a Healthier Life</Text>
+      <Text style={styles.title}>Preparate Para Una Vida Saludable</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -69,10 +69,10 @@ const SignUpScreen = ({ navigation }) => {
         title="Create Account"
         onPress={handleLogin}
       >
-        <Text style={styles.loginText}>Create Account</Text>
+        <Text style={styles.loginText}>Crear Cuenta</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.signInText}>Already have an account? Sign In</Text>
+        <Text style={styles.signInText}>¿Ya Tienes Cuenta? Inicia Sesión</Text>
       </TouchableOpacity>
     </View>
   );
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     color: "#32CD32",
     fontSize: 14,
     marginTop: 20,
+    fontWeight: "bold"
   },
 });
 

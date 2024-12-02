@@ -43,7 +43,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Breath in!</Text>
+      <Text style={styles.title}>¡Respira Hondo!</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -65,14 +65,14 @@ const LoginScreen = () => {
         title="Login"
         onPress={handleLogin}
       >
-        <Text style={styles.loginText}>Login</Text>
+        <Text style={styles.loginText}>Inicia Sesión</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.signButton}
         title="Sign Up"
         onPress={() => navigation.navigate("SignUp")}
       >
-        <Text style={styles.signText}>Don't have an account? Sign Up</Text>
+        <Text style={styles.signText}>¿No Tienes Cuenta? Registrate</Text>
       </TouchableOpacity>
     </View>
   );

@@ -34,7 +34,7 @@ const MapScreen = () => {
         querySnapshot = await getDocs(q);
       } catch (err) {
         console.error("Error getting docs:", err);
-        querySnapshot = { forEach: () => {} }; // Empty fallback querySnapshot
+        querySnapshot = { forEach: () => {} };
       }
 
       let timeRange;

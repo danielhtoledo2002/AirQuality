@@ -27,7 +27,6 @@ function HomeWithNavBar({ navigation }) {
     <>
       <HomeScreen />
       <NavBar navigation={navigation} />
-      <Button title="Logout" onPress={() => auth.signOut()} />
     </>
   );
 }
@@ -37,7 +36,6 @@ function PlotsWithNavBar({ navigation }) {
     <>
       <Plots />
       <NavBar navigation={navigation} />
-      <Button title="Logout" onPress={() => auth.signOut()} />
     </>
   );
 }
@@ -47,7 +45,6 @@ function PlotsWithMap({ navigation }) {
     <>
       <MapScreen />
       <NavBar navigation={navigation} />
-      <Button title="Logout" onPress={() => auth.signOut()} />
     </>
   );
 }

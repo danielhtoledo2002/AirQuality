@@ -4,11 +4,16 @@ import { Ionicons } from "react-native-vector-icons";
 import AirQualityBox from "../.components/AirQuality";
 import RangePicker from "../.components/AnalizeRange";
 import { auth, firestore } from "../firebaseConfig";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, Timestamp } from "firebase/firestore";
 import Constants from "expo-constants";
 
 const HomeScreen = ({ navigation }) => {
   const [selectedRange, setSelectedRange] = useState("Última Hora");
+
+  const handleRangeSelect = (value) => {
+    setSelectedRange(value);
+  };
+
   const [averages, setAverages] = useState({
     co: 0,
     so2: 0,
@@ -23,77 +28,87 @@ const HomeScreen = ({ navigation }) => {
 
   const fetchAirQualityData = async () => {
     try {
-      const now = new Date();
-      let rangeStart;
-
-      switch (selectedRange) {
-        case "Última Hora":
-          rangeStart = new Date(now.getTime() - 60 * 60 * 1000);
-          break;
-        case "Últimas 24 Horas":
-          rangeStart = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-          break;
-        case "Última Semana":
-          rangeStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          break;
-      }
-
+      const data = [];
       const pollutionRef = collection(firestore, "airPollution");
       const q = query(
         pollutionRef,
         where("userId", "==", auth.currentUser.uid),
-        where("timestamp", ">=", rangeStart.toISOString()),
-        orderBy("timestamp", "desc"),
+        orderBy("timestamp", "desc")
       );
-
-      const querySnapshot = await getDocs(q);
-      const locations = [];
-
+  
+      let querySnapshot;
+      try {
+        querySnapshot = await getDocs(q);
+      } catch (err) {
+        console.error("Error getting docs:", err);
+        querySnapshot = { forEach: () => {} };
+      }
+  
+      let timeRange;
+      if (selectedRange === 'Última Hora') {
+        timeRange = new Date().getTime() - 60 * 60 * 1000;
+      } else if (selectedRange === 'Últimas 24 Horas') {
+        timeRange = new Date().getTime() - 24 * 60 * 60 * 1000;
+      } else if (selectedRange === 'Última Semana') {
+        timeRange = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+      }
+  
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        locations.push(data.location);
+        const pollutionData = doc.data();
+        let docTimestamp;
+  
+        if (pollutionData.timestamp instanceof Timestamp) {
+          docTimestamp = pollutionData.timestamp.toMillis();
+        } else {
+          docTimestamp = new Date(pollutionData.timestamp).getTime();
+        }
+  
+        if (docTimestamp >= timeRange) {
+          data.push({
+            co: pollutionData.co,
+            so2: pollutionData.so2,
+            no: pollutionData.no,
+            o3: pollutionData.o3,
+          });
+        }
       });
-
-      const pollutionData = await Promise.all(
-        locations.map(async (loc, index) => {
-          const timestamp = querySnapshot.docs[index].data().timestamp;
-          const start = new Date(timestamp).getTime() / 1000;
-          const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/air_pollution/history?lat=${loc.latitude}&lon=${loc.longitude}&start=${start}&end=${start}&appid=${apiKey}`,
-          );
-          return await response.json();
-        }),
-      );
-
+  
+      // Calculate averages
       const totals = {
         co: 0,
         so2: 0,
         o3: 0,
         no: 0,
       };
-
-      pollutionData.forEach((data) => {
-        if (data.list && data.list[0]) {
-          const components = data.list[0].components;
-          totals.co += components.co;
-          totals.so2 += components.so2;
-          totals.o3 += components.o3;
-          totals.no += components.no;
-        }
+  
+      data.forEach((entry) => {
+        totals.co += entry.co;
+        totals.so2 += entry.so2;
+        totals.o3 += entry.o3;
+        totals.no += entry.no;
       });
-
-      const count = pollutionData.length;
-      setAverages({
-        co: (totals.co / count).toFixed(2),
-        so2: (totals.so2 / count).toFixed(2),
-        o3: (totals.o3 / count).toFixed(2),
-        no: (totals.no / count).toFixed(2),
-      });
+  
+      const count = data.length;
+      if (count > 0) {
+        setAverages({
+          co: (totals.co / count).toFixed(2),
+          so2: (totals.so2 / count).toFixed(2),
+          o3: (totals.o3 / count).toFixed(2),
+          no: (totals.no / count).toFixed(2),
+        });
+      } else {
+        setAverages({
+          co: 0,
+          so2: 0,
+          o3: 0,
+          no: 0,
+        });
+      }
     } catch (error) {
       console.error("Error fetching air quality data:", error);
     }
   };
-
+  
   const getQualityInfo = (value, type) => {
     let quality, color, trend;
 
@@ -132,7 +147,7 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <RangePicker onSelect={setSelectedRange} />
+      <RangePicker onValueSelect={handleRangeSelect} />
 
       <View style={styles.mainContent}>
         <View style={styles.airQualityContainer}>
