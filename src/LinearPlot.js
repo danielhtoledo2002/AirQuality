@@ -144,7 +144,7 @@ const Plots = () => {
               value={`${airQualityValue} mg/m³`}
               quality={`Calidad ${quality}`}
               trend={trend}
-              color={boxcolor}
+              color={color}
             />
           ) : (
             <Text>No data available</Text>
@@ -165,13 +165,13 @@ const Plots = () => {
               backgroundColor: "#f5f5f5",
               backgroundGradientFrom: "#ffffff",
               backgroundGradientTo: "#f5f5f5",
-              color: (opacity = color) => boxcolor, 
+              color: (opacity = color) => color, 
               labelColor: (opacity = 0) => "black",
           
               propsForDots: {
                 r: "6", 
                 strokeWidth: "2", 
-                fill: boxcolor
+                fill: color
                 
               },
               propsForLabels: {
